@@ -1,112 +1,59 @@
-var towerImg, tower;
-var doorImg, door, doorsGroup;
-var climberImg, climber, climbersGroup;
-var ghost, ghostImg;
-var invisibleBlockGroup, invisibleBlock;
-var gameState = "play"
 
-function preload(){
-  towerImg = loadImage("tower.png");
-  doorImg = loadImage("door.png");
-  climberImg = loadImage("climber.png");
-  ghostImg = loadImage("ghost-standing.png");
- // spookySound = loadSound("spooky.wav");
+const Engine = Matter.Engine;
+const World = Matter.World;
+const Bodies = Matter.Bodies;
+const Body = Matter.Body;
+const Constraint = Matter.Constraint;
+var roof;
+var bob1,bob2,bob3,bob4,bob5;
+function preload()
+{
+	
 }
 
-function setup(){
-  createCanvas(800,600);
+function setup() {
+	createCanvas(800, 700);
+
+
+	engine = Engine.create();
+	world = engine.world;
+
+	//Create the Bodies Here.
+roof = new Roof()
+bob1 = new Bob(300,300)
+bob2 = new Bob(350,300)
+bob3 = new Bob(400,300)
+bob4 =new Bob(450,300)
+bob5 =new Bob(500,300)
+rope1 = new Rope(bob1.body,roof.body,-100)
+rope2 = new Rope(bob2.body,roof.body,-50)
+rope3 = new Rope(bob3.body,roof.body,0)
+rope4 = new Rope(bob4.body,roof.body,50)
+rope5 = new Rope(bob5.body,roof.body,100)
+	Engine.run(engine);
   
-  tower = createSprite(300,300);
-  tower.addImage("tower",towerImg);
-  tower.velocityY = 3;
-  tower.scale=1;
-  doorsGroup = new Group();
-  climbersGroup = new Group();
-  invisibleBlockGroup = new Group();
-  
-  ghost = createSprite(200,200,50,50);
-  ghost.scale = 0.3;
-  ghost.addImage("ghost", ghostImg);
 }
 
-function draw(){
+
+function draw() {
+  rectMode(CENTER);
   background(0);
-  if (gameState === "play") {
-    if(keyDown("left_arrow")){
-      ghost.x = ghost.x - 3;
-    }
-    
-    if(keyDown("right_arrow")){
-      ghost.x = ghost.x + 3;
-    }
-    
-    if(keyDown("space")){
-      ghost.velocityY = -10;
-    }
-    
-    ghost.velocityY = ghost.velocityY + 0.8
-    
-    if(tower.y > 400){
-      tower.y = 300
-    }
-    spawnDoors();
-
-    
-    //climbersGroup.collide(ghost);
-    if(climbersGroup.isTouching(ghost)){
-      ghost.velocityY = 0;
-    }
-    if(invisibleBlockGroup.isTouching(ghost) || ghost.y > 600){
-      ghost.destroy();
-      gameState = "end"
-    }
-    
-    drawSprites();
-  }
-  
-  if (gameState === "end"){
-    stroke("yellow");
-    fill("yellow");
-    textSize(30);
-    text("Game Over", 230,250)
-  }
-
+  roof.display()
+  drawSprites();
+ bob1.display()
+ bob2.display()
+ bob3.display()
+ bob4.display()
+ bob5.display()
+rope1.display()
+rope2.display()
+rope3.display()
+rope4.display()
+rope5.display()
 }
 
-function spawnDoors() {
-  //write code here to spawn the doors in the tower
-  if (frameCount % 240 === 0) {
-    var door = createSprite(200, -50);
-    var climber = createSprite(200,10);
-    var invisibleBlock = createSprite(200,15);
-    invisibleBlock.width = climber.width;
-    invisibleBlock.height = 2;
-    
-    door.x = Math.round(random(120,400));
-    climber.x = door.x;
-    invisibleBlock.x = door.x;
-    
-    door.addImage(doorImg);
-    climber.addImage(climberImg);
-    
-    door.velocityY = 1;
-    climber.velocityY = 1;
-    invisibleBlock.velocityY = 1;
-    
-    ghost.depth = door.depth;
-    ghost.depth +=1;
-   
-    //assign lifetime to the variable
-    door.lifetime = 800;
-    climber.lifetime = 800;
-    invisibleBlock.lifetime = 800;
-
-    
-    //add each door to the group
-    doorsGroup.add(door);
-    invisibleBlock.debug = true;
-    climbersGroup.add(climber);
-    invisibleBlockGroup.add(invisibleBlock);
-  }
+function keyPressed(){
+	if(keyCode === UP_ARROW){
+Matter.Body.applyForce(bob1.body,bob1.body.position,{x:-50,y:-50})
+	}
 }
-
